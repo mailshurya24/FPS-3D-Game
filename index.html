@@ -4,16 +4,26 @@
     <title>Shooting Game in Virtual Reality</title>
     <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>   
     <script src="https://cdn.jsdelivr.net/gh/n5ro/aframe-physics-system@v4.0.1/dist/aframe-physics-system.min.js"></script>
-    <script src = "./shoot.js"></script>
+    <script src="https://unpkg.com/aframe-environment-component@1.2.0/dist/aframe-environment-component.min.js"></script>
 
+    <script src="./shoot.js"></script>
+    <script src="./gameObjects.js"></script>
   </head>
   <body>
     <a-scene id="scene">
 
       <!--Assets-->
-      <a-assets>
-        <a-asset-item id = "gun" src = "./models/shooter/gun.gltf"></a-asset-item>
+      <a-assets>        
+        <a-asset-item
+          id="shooter"
+          src="./models/shooter/gun.gltf"
+        ></a-asset-item>
+        
       </a-assets>
+
+      <a-entity environment = "preset: egypt; skyType: gradient; lighting: point"></a-entity>
+
+      <a-entity wirefence></a-entity>
       
       <!--Light-->
       <a-entity light="type: ambient; color: yellow; intensity:0.5"></a-entity>
@@ -26,11 +36,15 @@
         wasd-controls
         look-controls="pointerLockEnabled: false"        
       >
-      <a-entity id = "weapon" gltf-model = "#gun" position = "0 -4.4 3" scale = "0.35 1 1" rotation = "0 180 0">
-
-      </a-entity>
-        
-      <a-cursor></a-cursor>        
+        <a-entity
+            id="weapon"
+            gltf-model="#shooter"
+            position="0 -4.4 3"
+            rotation="0 180 0"
+            scale="0.35 1 1"          
+          >
+        </a-entity>
+        <a-cursor></a-cursor>         
       </a-entity>
 
       <!--Bullets-->
@@ -46,22 +60,10 @@
         width="200"
         color="#FBF2D4"
         static-body
-        visible="true"
+        visible="false"
       >
       </a-plane>
 
-      <!--Boxes-->
-      <a-box position="-2 1.5 -10" color="tomato" depth="1" height="1" width="1"></a-box>
-
-      <a-box position="0 1.5 -10" color="tomato" depth="1" height="1" width="1"></a-box>
-
-      <a-box position="2 1.5 -10" color="tomato" depth="1" height="1" width="1"></a-box>
-
-      <a-box position="-1 2.5 -10" color="tomato" depth="1" height="1" width="1"></a-box>
-
-      <a-box position="1 2.5 -10" color="tomato" depth="1" height="1" width="1"></a-box>
-
-      <a-box position="0 3.5 -10" color="tomato" depth="1" height="1" width="1"></a-box>
     </a-scene>
   </body>
 </html>
