@@ -2,16 +2,21 @@
 <html>
   <head>
     <title>Shooting Game in Virtual Reality</title>
-    <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>   
-    <script src="https://cdn.jsdelivr.net/gh/n5ro/aframe-physics-system@v4.0.1/dist/aframe-physics-system.min.js"></script>
-    <script src="https://unpkg.com/aframe-environment-component@1.2.0/dist/aframe-environment-component.min.js"></script>
+    <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
+  <script
+    src="https://cdn.jsdelivr.net/gh/n5ro/aframe-physics-system@v4.0.1/dist/aframe-physics-system.min.js"></script>
+  <script src="https://unpkg.com/aframe-environment-component@1.1.0/dist/aframe-environment-component.min.js"></script>
+  <script src="https://recast-api.donmccurdy.com/aframe-inspector-plugin-recast.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
 
     <script src="./shoot.js"></script>
     <script src="./gameObjects.js"></script>
+    <script src="./playerMovement.js"></script>
+    <script src="./tanks.js"></script>
   </head>
   <body>
-    <a-scene id="scene">
-
+    <a-scene id="scene" inspector-plugin-recast>
+      
       <!--Assets-->
       <a-assets>        
         <a-asset-item
@@ -19,36 +24,57 @@
           src="./models/shooter/gun.gltf"
         ></a-asset-item>
         
+        <a-asset-item id = "collider" src = "./models/shooter/navmesh.gltf"></a-asset-item>
+
+        <a-asset-item id = "tank" src = "./models/tank/scene.gltf"></a-asset-item>
+
+        <a-audio id = "footstep" src = "./sounds/sounds_footStep.mp3"></a-audio>
       </a-assets>
+
+      <a-entity id = "sound" sound = "src: #footstep: autoplay: false; loop: false;"></a-entity>
 
       <a-entity environment = "preset: egypt; skyType: gradient; lighting: point"></a-entity>
 
-      <a-entity wirefence></a-entity>
+      <a-entity wirefence boxes></a-entity>
       
       <!--Light-->
       <a-entity light="type: ambient; color: yellow; intensity:0.5"></a-entity>
 
-      <!--Camera and Cursor-->
-      <a-entity
-        id="camera"
-        camera
-        position="0 1.6 0"
-        wasd-controls
-        look-controls="pointerLockEnabled: false"        
-      >
-        <a-entity
-            id="weapon"
-            gltf-model="#shooter"
-            position="0 -4.4 3"
-            rotation="0 180 0"
-            scale="0.35 1 1"          
-          >
+      <a-entity id="camera-rig" movement-controls="speed: 0.2; constrainToNavMesh: true" position="0 1 2">
+        <!--Camera and Cursor-->
+        <a-entity id="camera" camera position="0 1.6 0" look-controls="pointerLockEnabled: false">
+          <a-entity id="weapon" gltf-model="#shooter" position="0 -4.4 3" rotation="0 180 0" scale="0.35 1 1"
+            body = "type: static; mass: 5; shape: none" shape = "shape: sphere; radius: 5; offset: 0 3 0"
+            player-movement>
+          </a-entity>
+          <a-cursor></a-cursor>
         </a-entity>
-        <a-cursor></a-cursor>         
       </a-entity>
 
       <!--Bullets-->
       <a-entity bullets></a-entity>
+
+      <a-entity enemybullets></a-entity>
+
+      <a-entity id = "level1" position = "-6 5.2 -7.1" text = "font: mozillavr; width: 5; height: 5; value: LEVEL 1"></a-entity>
+      <a-entity id = "tanktargets" position = "7 5 -7.1" text = "font: mozillavr; width: 10; height: 5; value: SHOOT TANKS">
+        <a-entity id = "counttank" position = "3 0 0" text = "font: mozillavr; width: 10; height: 5; value: LEVEL 2"></a-entity>
+      </a-entity>
+
+      <a-entity id = "playerlife" position = "-2 5 -7.1" text = "font: mozillavr; width: 10; height: 5; value: Player Life">
+        <a-entity id = "countlife" position = "3 0 0" text = "font: mozillavr; width: 5; height: 5; value: 2"></a-entity>
+      </a-entity>
+
+      <a-entity id = "over" position = "1 1 -3" text = "font: mozillavr; width: 5; height: 5; value: Better Luck Next Time!" visible = "false"></a-entity>
+      <a-entity id = "completed" position = "1.5 1 -3" text = "font: mozillavr; width: 5; height: 5; value: Congratulations!" visible = "false"></a-entity>
+
+      <a-entity class = "enemy" id = "enemy1" rotation = "0 90 0" gltf-model = "#tank" position = "-10 0 -15" scale = "0.015 0.015 0.015"
+        animation-mixer static-body animation = "property: position; to: 10 0 -15; dur: 20000; loop: true; dir: alternate;">
+      </a-entity>
+
+      <a-entity class = "enemy" id = "enemy2" rotation = "0 90 0" gltf-model = "#tank" position = "-10 0 -15" scale = "0.015 0.015 0.015"
+        animation-mixer static-body animation = "property: position; to: 10 0 -15; dur: 20000; loop: true; dir: alternate;">
+      </a-entity>
 
       <!--Ground-->
       <a-plane
@@ -63,6 +89,8 @@
         visible="false"
       >
       </a-plane>
+
+      <a-entity id = "navigate" gltf-model = "#collider" visible = "false" nav-mesh></a-entity>
 
     </a-scene>
   </body>
